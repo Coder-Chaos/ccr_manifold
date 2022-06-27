@@ -1,0 +1,42 @@
+target:= test
+
+# openmp
+OPENMP_FLAG=-fopenmp
+
+# compiler
+CXX=aarch64-linux-gnu-g++
+
+# flags
+CFLAGS:=-g -Wall -std=c++11
+CFLAGS+=$(OPENMP_FLAG)
+
+# headers
+CFLAGS+=-I$(PWD)
+CFLAGS+=-I/home/johnny/work/Mark-I_SDK_V1.0.0/src/utility
+
+# do3think lib header path
+CFLAGS+=-I/home/johnny/work/Mark-I_SDK_V1.0.0/3rdparty/do3think/include
+
+# do3think lib path
+do3think_shared_lib=-L/home/johnny/work/Mark-I_SDK_V1.0.0/3rdparty/do3think/lib
+LDFLAGS:=-ldvp -lhzd -lpthread -fopenmp
+
+# SOURCE
+C_SRCS=$(wildcard $(PWD)/*.cc)
+
+# OBJS
+C_OBJS=$(C_SRCS:%.cc=%.o)
+
+.PHONY : clean all
+
+all: $(target)
+$(target):$(C_OBJS)
+	$(CXX)  $^ -o $@  $(do3think_shared_lib) $(LDFLAGS)
+
+$(C_OBJS):%.o:%.cc
+	$(CXX) $(CFLAGS) -c $^ -o $@
+
+clean:
+	rm -f $(target)
+	rm -f $(C_OBJS)
+	
